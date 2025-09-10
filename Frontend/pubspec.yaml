@@ -1,0 +1,42 @@
+name: beauty_commerce_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  dio: ^5.9.0
+  http_parser: ^4.1.2
+  go_router: ^16.2.1
+  image_picker: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+  # Add this for generating app icons
+  flutter_launcher_icons: ^0.13.1
+
+# Configure launcher icons (Android & iOS)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/images/logo.png        # your source icon (recommend 1024x1024 PNG)
+  adaptive_icon_background: "#FFFFFF"       # Android adaptive icon background
+  min_sdk_android: 21
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/logo.png
+    - assets/images/
+    - assets/

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Settings — Admin{% endblock %}
+{% block content %}
+  <div class="bg-white/95 backdrop-blur shadow-soft border border-emerald-50 rounded-2xl p-6 md:p-8">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="h-9 w-9 rounded-xl bg-emerald-600/10 text-emerald-700 grid place-items-center">
+          <!-- gear icon -->
+          <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M11.983 1.574a2 2 0 00-3.966 0l-.114.66a1 1 0 01-.64.77l-.606.215a2 2 0 00-1.108 2.806l.31.56a1 1 0 010 .93l-.31.559a2 2 0 001.108 2.806l.606.216a1 1 0 01.64.77l.114.66a2 2 0 003.966 0l.114-.66a1 1 0 01.64-.77l.606-.216a2 2 0 001.108-2.806l-.31-.56a1 1 0 010-.93l.31-.559a2 2 0 00-1.108-2.806l-.606-.215a1 1 0 01-.64-.77l-.114-.66zM10 12.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+        </span>
+        <div>
+          <h1 class="text-2xl font-bold text-slate-800">Store Settings</h1>
+          <p class="text-slate-500 text-sm">Configure basic store preferences, tax and shipping.</p>
+        </div>
+      </div>
+    </div>
+
+    <form class="mt-6 space-y-8" method="post" action="{{ url_for('settings_update') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- General -->
+      <section>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-6 w-6 rounded-md bg-emerald-600/10 grid place-items-center">
+            <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 20 20" fill="currentColor"><path d="M3 5a2 2 0 012-2h10a2 2 0 012 2v9l-4-2-4 2-4-2-2 1V5z"/></svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">General</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Store Name</label>
+            <input name="store_name" required value="{{ settings.store_name }}"
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            <p class="mt-1 text-xs text-slate-500">Shown in the dashboard and emails.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing & Taxes -->
+      <section>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-6 w-6 rounded-md bg-emerald-600/10 grid place-items-center">
+            <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C6.134 2 3 5.134 3 9s3.134 7 7 7 7-3.134 7-7-3.134-7-7-7zm.75 3a.75.75 0 00-1.5 0v.268A3.75 3.75 0 008 9h1.5a2.25 2.25 0 112.25 2.25H10A.75.75 0 0010 12h.75V13a.75.75 0 001.5 0v-.268A3.75 3.75 0 0012 9h-1.5A2.25 2.25 0 118.25 6.75H10a.75.75 0 000-1.5H10.75z"/></svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">Pricing & Taxes</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Default Currency</label>
+            <input name="currency_default" required value="{{ settings.currency_default or 'LKR' }}"
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            <p class="mt-1 text-xs text-slate-500">e.g., LKR, USD, EUR</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Tax Rate (%)</label>
+            <input name="tax_rate" type="number" step="0.01" value="{{ settings.tax_rate or 0 }}"
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            <p class="mt-1 text-xs text-slate-500">Applied to order totals.</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Flat Shipping Rate</label>
+            <input name="shipping_flat_rate" type="number" step="0.01" value="{{ settings.shipping_flat_rate or 0 }}"
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            <p class="mt-1 text-xs text-slate-500">Added to each order (before tax).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-300 transition">
+          <!-- save icon -->
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17 6l-3-3H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V6zM5 5h8v4H5V5z"/></svg>
+          Save Settings
+        </button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

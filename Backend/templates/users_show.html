@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}User — {{ u.name }}{% endblock %}
+{% block content %}
+  <div class="bg-white/90 shadow-soft rounded-2xl p-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">{{ u.name }}</h1>
+      <div class="space-x-3">
+        <a class="text-purple-700 underline" href="{{ url_for('users_edit', user_id=u._id) }}">Edit</a>
+        <form class="inline" method="post" action="{{ url_for('users_toggle_active', user_id=u._id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="underline {% if u.is_active %}text-red-700{% else %}text-green-700{% endif %}">
+            {{ 'Deactivate' if u.is_active else 'Activate' }}
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      <div>
+        <p><strong>Email:</strong> {{ u.email }}</p>
+        <p><strong>Role:</strong> {{ (u.role or 'user')|capitalize }}</p>
+        <p><strong>Status:</strong> {% if u.is_active %}<span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">Active</span>{% else %}<span class="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-700">Inactive</span>{% endif %}</p>
+        <p><strong>Created:</strong> {{ (u.created_at)|dt }}</p>
+      </div>
+      <div>
+        <h2 class="font-semibold mb-2">Recent Orders</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="text-left text-gray-500"><tr><th class="py-2 pr-4">Order</th><th class="py-2 pr-4">Total</th><th class="py-2 pr-4">Status</th><th class="py-2 pr-4">Date</th></tr></thead>
+            <tbody>
+              {% for o in orders %}
+                <tr class="border-t">
+                  <td class="py-2 pr-4"><a class="underline" href="{{ url_for('orders_show_admin', order_id=o._id) }}">{{ o.order_no or o._id }}</a></td>
+                  <td class="py-2 pr-4">{{ (o.total or 0)|currency }}</td>
+                  <td class="py-2 pr-4">{{ (o.status)|status_chip | safe }}</td>
+                  <td class="py-2 pr-4">{{ (o.created_at)|dt }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="4" class="py-3 text-gray-500">No orders.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

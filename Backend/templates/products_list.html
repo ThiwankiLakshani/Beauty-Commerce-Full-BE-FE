@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}Products — Admin{% endblock %}
+{% block content %}
+  <div class="bg-white/95 backdrop-blur shadow-soft border border-emerald-50 rounded-2xl p-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between gap-3">
+      <h1 class="text-2xl font-bold text-slate-800">Products</h1>
+      <div class="flex items-center gap-2">
+        <a href="{{ url_for('products_new_admin') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-300 transition">
+          <!-- plus icon -->
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/></svg>
+          Add Product
+        </a>
+        <a href="{{ url_for('export_products_csv') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold bg-white border border-slate-200 hover:bg-slate-50 shadow-sm transition">
+          <!-- download icon -->
+          <svg class="w-4 h-4 text-slate-600" viewBox="0 0 20 20" fill="currentColor"><path d="M3 14a2 2 0 002 2h10a2 2 0 002-2v-1a1 1 0 112 0v1a4 4 0 01-4 4H5a4 4 0 01-4-4v-1a1 1 0 112 0v1z"/><path d="M7 9a1 1 0 011-1h2V3a1 1 0 112 0v5h2a1 1 0 01.7 1.714l-3 3a1 1 0 01-1.4 0l-3-3A1 1 0 017 9z"/></svg>
+          Export CSV
+        </a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <form class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div class="md:col-span-2">
+        <div class="relative">
+          <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.9 14.32a7 7 0 111.414-1.414l3.387 3.386a1 1 0 01-1.414 1.415l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd"/></svg>
+          </span>
+          <input type="text" name="q" value="{{ q }}" placeholder="Search name, brand, or SKU"
+                 class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition" />
+        </div>
+      </div>
+
+      <div class="flex items-stretch gap-2">
+        <div class="relative w-full">
+          <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 6h12v2H4zM4 10h12v2H4zM4 14h12v2H4z"/></svg>
+          </span>
+          <select name="status"
+                  class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            <option value="">All statuses</option>
+            <option value="draft"     {% if status=='draft' %}selected{% endif %}>Draft</option>
+            <option value="published" {% if status=='published' %}selected{% endif %}>Published</option>
+            <option value="archived"  {% if status=='archived' %}selected{% endif %}>Archived</option>
+          </select>
+        </div>
+
+        <button class="px-4 py-2.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-300 transition">
+          Filter
+        </button>
+        <a href="{{ url_for('products_list_admin') }}"
+           class="hidden md:inline-flex items-center px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
+          Reset
+        </a>
+      </div>
+    </form>
+
+    <!-- Table -->
+    <div class="mt-5 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="text-left text-slate-500">
+          <tr class="border-b border-slate-100">
+            <th class="py-2.5 pr-4">Product</th>
+            <th class="py-2.5 pr-4">Brand</th>
+            <th class="py-2.5 pr-4">Category / Type</th>
+            <th class="py-2.5 pr-4">Price</th>
+            <th class="py-2.5 pr-4">Stock</th>
+            <th class="py-2.5 pr-4">Status</th>
+            <th class="py-2.5 pr-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for p in products %}
+            <tr class="hover:bg-slate-50/60">
+              <!-- Product + thumbnail -->
+              <td class="py-2.5 pr-4">
+                <a class="inline-flex items-center gap-3 group"
+                   href="{{ url_for('products_show_admin', product_id=p._id) }}">
+                  {% if p.hero_image %}
+                    <img src="{{ p.hero_image }}" alt="{{ p.name }}"
+                         class="h-10 w-12 object-cover rounded-md border border-slate-200 shadow-sm" />
+                  {% else %}
+                    <span class="h-10 w-12 rounded-md border border-dashed border-slate-300 grid place-items-center text-[10px] text-slate-400">IMG</span>
+                  {% endif %}
+                  <span class="group-hover:underline decoration-emerald-400 underline-offset-2 font-medium text-slate-800">
+                    {{ p.name }}
+                  </span>
+                </a>
+              </td>
+
+              <td class="py-2.5 pr-4 text-slate-700">{{ p.brand or '-' }}</td>
+
+              <td class="py-2.5 pr-4 text-slate-700">
+                {{ p.category or '-' }} / {{ p.item_type or '-' }}
+              </td>
+
+              <td class="py-2.5 pr-4 text-slate-800 font-medium">{{ (p.price or 0)|currency }}</td>
+
+              <td class="py-2.5 pr-4">
+                {% set s = p.stock or 0 %}
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium
+                  {% if s <= 5 %} bg-red-100 text-red-700
+                  {% elif s <= 15 %} bg-yellow-100 text-yellow-800
+                  {% else %} bg-emerald-100 text-emerald-800 {% endif %}">
+                  {{ s }}
+                </span>
+              </td>
+
+              <td class="py-2.5 pr-4">
+                {% set st = (p.status or 'draft')|lower %}
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium
+                  {% if st == 'published' %} bg-emerald-100 text-emerald-800
+                  {% elif st == 'archived' %} bg-slate-200 text-slate-700
+                  {% else %} bg-yellow-100 text-yellow-800 {% endif %}">
+                  {{ (p.status or 'draft')|capitalize }}
+                </span>
+              </td>
+
+              <td class="py-2.5 pr-4">
+                <div class="flex items-center gap-2">
+                  <a href="{{ url_for('products_edit_admin', product_id=p._id) }}"
+                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
+                    <!-- pencil -->
+                    <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793z"/><path d="M4 13.5V16h2.5l7.086-7.086-2.5-2.5L4 13.5z"/></svg>
+                    Edit
+                  </a>
+                  <form method="post" action="{{ url_for('products_delete_admin', product_id=p._id) }}"
+                        onsubmit="return confirm('Delete this product?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-200 bg-white text-red-700 hover:bg-red-50">
+                      <!-- trash -->
+                      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 7a1 1 0 011 1v7a1 1 0 11-2 0V8a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V8a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V8a1 1 0 011-1z"/><path d="M4 5a1 1 0 011-1h3l1-1h2l1 1h3a1 1 0 110 2H5a1 1 0 01-1-1z"/></svg>
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" class="py-10">
+                <div class="flex flex-col items-center justify-center text-center">
+                  <div class="h-12 w-12 rounded-2xl bg-emerald-600/10 flex items-center justify-center mb-3">
+                    <!-- box icon -->
+                    <svg class="w-6 h-6 text-emerald-700" viewBox="0 0 24 24" fill="currentColor"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 10l9 5 9-5v6l-9 5-9-5v-6z" opacity=".85"/></svg>
+                  </div>
+                  <p class="text-slate-700 font-medium">No products yet</p>
+                  <p class="text-slate-500 text-sm">Create your first product to get started.</p>
+                  <a href="{{ url_for('products_new_admin') }}"
+                     class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700">
+                    <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/></svg>
+                    Add Product
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% include "_pagination.html" %}
+  </div>
+{% endblock %}

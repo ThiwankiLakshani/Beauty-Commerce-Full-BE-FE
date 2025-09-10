@@ -1,0 +1,17 @@
+{% if page is defined %}
+  <div class="flex items-center justify-between mt-4">
+    {% set qp = request.args.to_dict() %}
+    {% set prev_qs = qp.copy() %}{% set _ = prev_qs.update({'page': (page-1)}) %}
+    {% set next_qs = qp.copy() %}{% set _ = next_qs.update({'page': (page+1)}) %}
+
+    <a class="px-3 py-1 rounded-lg bg-white shadow text-sm {% if page <= 1 %}pointer-events-none opacity-50{% endif %}"
+       href="{% if page>1 %}{{ request.path }}?{{ prev_qs|urlencode }}{% else %}#{% endif %}">
+      ← Prev
+    </a>
+    <span class="text-sm text-gray-500">Page {{ page }}</span>
+    <a class="px-3 py-1 rounded-lg bg-white shadow text-sm {% if not has_next %}pointer-events-none opacity-50{% endif %}"
+       href="{% if has_next %}{{ request.path }}?{{ next_qs|urlencode }}{% else %}#{% endif %}">
+      Next →
+    </a>
+  </div>
+{% endif %}

@@ -1,0 +1,9 @@
+{
+  "Acne": 0,
+  "Blackheads": 1,
+  "Dark Spots": 2,
+  "Dry Skin": 3,
+  "Normal Skin": 4,
+  "Oily Skin": 5,
+  "Wrinkles": 6
+}

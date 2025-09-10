@@ -1,0 +1,303 @@
+{
+  "image": "/Volumes/Macintosh HD 1/Facial_Project/Test_Scripts/test.jpg",
+  "device": "cpu",
+  "combine_method": "noisy_or",
+  "skin_type": {
+    "label": "Oily Skin",
+    "prob": 0.008119
+  },
+  "conditions_model": {
+    "model_kind": "torchscript",
+    "all": [
+      {
+        "label": "Acne",
+        "prob": 0.958893
+      },
+      {
+        "label": "Dark Spots",
+        "prob": 0.016453
+      },
+      {
+        "label": "Oily Skin",
+        "prob": 0.008119
+      },
+      {
+        "label": "Normal Skin",
+        "prob": 0.00606
+      },
+      {
+        "label": "Blackheads",
+        "prob": 0.005418
+      },
+      {
+        "label": "Dry Skin",
+        "prob": 0.003454
+      },
+      {
+        "label": "Wrinkles",
+        "prob": 0.001602
+      }
+    ],
+    "non_skin": [
+      {
+        "label": "Acne",
+        "prob": 0.958893
+      },
+      {
+        "label": "Dark Spots",
+        "prob": 0.016453
+      },
+      {
+        "label": "Blackheads",
+        "prob": 0.005418
+      },
+      {
+        "label": "Wrinkles",
+        "prob": 0.001602
+      }
+    ]
+  },
+  "lesions_model": {
+    "all": [
+      {
+        "label": "Erythema",
+        "prob": 0.974088
+      },
+      {
+        "label": "Patch",
+        "prob": 0.783311
+      },
+      {
+        "label": "Papule",
+        "prob": 0.373852
+      },
+      {
+        "label": "Plaque",
+        "prob": 0.202619
+      },
+      {
+        "label": "Macule",
+        "prob": 0.02101
+      },
+      {
+        "label": "Pustule",
+        "prob": 0.016703
+      },
+      {
+        "label": "Crust",
+        "prob": 0.011067
+      },
+      {
+        "label": "Brown(Hyperpigmentation)",
+        "prob": 0.003951
+      },
+      {
+        "label": "Sclerosis",
+        "prob": 0.002158
+      },
+      {
+        "label": "Do not consider this image",
+        "prob": 0.001598
+      },
+      {
+        "label": "Scar",
+        "prob": 0.000715
+      },
+      {
+        "label": "Comedo",
+        "prob": 0.00027
+      },
+      {
+        "label": "Atrophy",
+        "prob": 0.000243
+      },
+      {
+        "label": "Telangiectasia",
+        "prob": 0.000176
+      },
+      {
+        "label": "Yellow",
+        "prob": 0.000103
+      },
+      {
+        "label": "White(Hypopigmentation)",
+        "prob": 3.7e-05
+      },
+      {
+        "label": "Wheal",
+        "prob": 3.4e-05
+      },
+      {
+        "label": "Purple",
+        "prob": 1.1e-05
+      },
+      {
+        "label": "Nodule",
+        "prob": 8e-06
+      },
+      {
+        "label": "Black",
+        "prob": 6e-06
+      },
+      {
+        "label": "Erosion",
+        "prob": 5e-06
+      },
+      {
+        "label": "Scale",
+        "prob": 4e-06
+      },
+      {
+        "label": "Ulcer",
+        "prob": 3e-06
+      },
+      {
+        "label": "Induration",
+        "prob": 3e-06
+      },
+      {
+        "label": "Friable",
+        "prob": 2e-06
+      },
+      {
+        "label": "Exophytic/Fungating",
+        "prob": 2e-06
+      },
+      {
+        "label": "Cyst",
+        "prob": 2e-06
+      },
+      {
+        "label": "Excoriation",
+        "prob": 2e-06
+      },
+      {
+        "label": "Warty/Papillomatous",
+        "prob": 1e-06
+      },
+      {
+        "label": "Exudate",
+        "prob": 1e-06
+      },
+      {
+        "label": "Poikiloderma",
+        "prob": 1e-06
+      },
+      {
+        "label": "Dome-shaped",
+        "prob": 0.0
+      },
+      {
+        "label": "Acuminate",
+        "prob": 0.0
+      },
+      {
+        "label": "Vesicle",
+        "prob": 0.0
+      },
+      {
+        "label": "Bulla",
+        "prob": 0.0
+      },
+      {
+        "label": "Blue",
+        "prob": 0.0
+      },
+      {
+        "label": "Umbilicated",
+        "prob": 0.0
+      },
+      {
+        "label": "Lichenification",
+        "prob": 0.0
+      },
+      {
+        "label": "Purpura/Petechiae",
+        "prob": 0.0
+      },
+      {
+        "label": "Pedunculated",
+        "prob": 0.0
+      },
+      {
+        "label": "Xerosis",
+        "prob": 0.0
+      },
+      {
+        "label": "Fissure",
+        "prob": 0.0
+      },
+      {
+        "label": "Salmon",
+        "prob": 0.0
+      },
+      {
+        "label": "Gray",
+        "prob": 0.0
+      },
+      {
+        "label": "Translucent",
+        "prob": 0.0
+      },
+      {
+        "label": "Abscess",
+        "prob": 0.0
+      },
+      {
+        "label": "Burrow",
+        "prob": 0.0
+      },
+      {
+        "label": "Flat topped",
+        "prob": 0.0
+      },
+      {
+        "label": "Pigmented",
+        "prob": 0.0
+      }
+    ],
+    "detected": [
+      {
+        "label": "Erythema",
+        "prob": 0.974088
+      },
+      {
+        "label": "Patch",
+        "prob": 0.783311
+      },
+      {
+        "label": "Papule",
+        "prob": 0.373852
+      }
+    ],
+    "threshold": 0.3
+  },
+  "final": {
+    "main_concerns": [
+      {
+        "label": "Redness & Irritation",
+        "prob": 0.974088
+      },
+      {
+        "label": "Acne & Breakouts",
+        "prob": 0.958893
+      },
+      {
+        "label": "Dry Patches & Roughness",
+        "prob": 0.783311
+      },
+      {
+        "label": "Inflamed Bumps (Papules)",
+        "prob": 0.373852
+      }
+    ],
+    "low_concerns": [
+      {
+        "label": "Thick Patches (Plaques)",
+        "prob": 0.202619
+      }
+    ],
+    "final_min_prob": 0.3,
+    "epsilon": 0.05
+  }
+}

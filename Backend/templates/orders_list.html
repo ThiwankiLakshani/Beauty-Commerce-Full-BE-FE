@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Orders — Admin{% endblock %}
+{% block content %}
+  <div class="bg-white/95 backdrop-blur shadow-soft border border-emerald-50 rounded-2xl p-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between gap-3">
+      <h1 class="text-2xl font-bold text-slate-800">Orders</h1>
+      <div class="flex items-center gap-2">
+        <a href="{{ url_for('export_orders_csv') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold bg-white border border-slate-200 hover:bg-slate-50 shadow-sm transition">
+          <!-- download icon -->
+          <svg class="w-4 h-4 text-slate-600" viewBox="0 0 20 20" fill="currentColor"><path d="M3 14a2 2 0 002 2h10a2 2 0 002-2v-1a1 1 0 112 0v1a4 4 0 01-4 4H5a4 4 0 01-4-4v-1a1 1 0 112 0v1z"/><path d="M7 9a1 1 0 011-1h2V3a1 1 0 112 0v5h2a1 1 0 01.7 1.714l-3 3a1 1 0 01-1.4 0l-3-3A1 1 0 017 9z"/></svg>
+          Export CSV
+        </a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <form class="mt-5 grid grid-cols-1 md:grid-cols-5 gap-3">
+      <div class="md:col-span-3">
+        <div class="relative">
+          <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <!-- search icon -->
+            <svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.9 14.32a7 7 0 111.414-1.414l3.387 3.386a1 1 0 01-1.414 1.415l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd"/></svg>
+          </span>
+          <input type="text" name="q" value="{{ q }}" placeholder="Order ID / email / order no"
+                 class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+        </div>
+      </div>
+
+      <div>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <!-- status icon -->
+            <svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16z"/><path d="M10 6a1 1 0 011 1v3.382l2.447 1.632a1 1 0 11-1.11 1.664l-3-2A1 1 0 019 11V7a1 1 0 011-1z" fill="white" opacity=".7"/></svg>
+          </span>
+          <select name="status"
+                  class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            <option value="">All statuses</option>
+            {% for s in ORDER_STATUSES %}
+              <option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s|capitalize }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-stretch gap-2 md:col-span-1">
+        <button class="w-full md:w-auto px-4 py-2.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-300 transition">
+          Filter
+        </button>
+        <a href="{{ url_for('orders_list_admin') }}"
+           class="hidden md:inline-flex items-center px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
+          Reset
+        </a>
+      </div>
+    </form>
+
+    <!-- Table -->
+    <div class="mt-5 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="text-left text-slate-500">
+          <tr class="border-b border-slate-100">
+            <th class="py-2.5 pr-4">Order</th>
+            <th class="py-2.5 pr-4">Customer</th>
+            <th class="py-2.5 pr-4">Total</th>
+            <th class="py-2.5 pr-4">Status</th>
+            <th class="py-2.5 pr-4">Date</th>
+            <th class="py-2.5 pr-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for o in orders %}
+            <tr class="hover:bg-slate-50/60">
+              <td class="py-2.5 pr-4 font-mono text-xs text-slate-800">
+                {{ o.order_no or o._id }}
+              </td>
+
+              <td class="py-2.5 pr-4">
+                {% set u = users_map.get(o.user_id or '') %}
+                {% if u %}
+                  <a class="font-medium text-slate-800 hover:underline decoration-emerald-400 underline-offset-2"
+                     href="{{ url_for('users_show', user_id=u._id) }}">{{ u.name }}</a><br>
+                  <span class="text-slate-500 text-xs">{{ u.email }}</span>
+                {% else %}
+                  <span class="text-slate-700">{{ o.email or '-' }}</span>
+                {% endif %}
+              </td>
+
+              <td class="py-2.5 pr-4 text-slate-800 font-medium">
+                {{ (o.total or 0)|currency }}
+              </td>
+
+              <td class="py-2.5 pr-4">
+                {{ (o.status)|status_chip | safe }}
+              </td>
+
+              <td class="py-2.5 pr-4 text-slate-700">
+                {{ (o.created_at)|dt }}
+              </td>
+
+              <td class="py-2.5 pr-4">
+                <a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                   href="{{ url_for('orders_show_admin', order_id=o._id) }}">
+                  <!-- eye icon -->
+                  <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 4.5c-5 0-8 5.5-8 5.5s3 5.5 8 5.5 8-5.5 8-5.5-3-5.5-8-5.5zm0 9a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg>
+                  View
+                </a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="py-10">
+                <div class="flex flex-col items-center justify-center text-center">
+                  <div class="h-12 w-12 rounded-2xl bg-emerald-600/10 flex items-center justify-center mb-3">
+                    <!-- receipt icon -->
+                    <svg class="w-6 h-6 text-emerald-700" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h10a2 2 0 012 2v14l-3-2-3 2-3-2-3 2-3-2V5a2 2 0 012-2z"/><path d="M9 7h6v2H9zM9 11h6v2H9zM9 15h4v2H9z" opacity=".85"/></svg>
+                  </div>
+                  <p class="text-slate-700 font-medium">No orders found</p>
+                  <p class="text-slate-500 text-sm">Try different filters or clear the search.</p>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% include "_pagination.html" %}
+  </div>
+{% endblock %}

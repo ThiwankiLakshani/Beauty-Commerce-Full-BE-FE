@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block title %}Add Product — Admin{% endblock %}
+{% block content %}
+  <form method="post" action="{{ url_for('products_create_admin') }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="bg-white/95 backdrop-blur shadow-soft border border-emerald-50 rounded-2xl p-6 md:p-8 space-y-8">
+
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="space-y-1">
+          <h1 class="text-2xl font-bold text-slate-800">Add Product</h1>
+          <p class="text-slate-500 text-sm">Create a new catalog item with images, attributes, and pricing.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="{{ url_for('products_list_admin') }}"
+             class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition">
+            <!-- back -->
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4A1 1 0 018.707 6.293L6.414 8.586H17a1 1 0 110 2H6.414l2.293 2.293a1 1 0 010 1.414z"/></svg>
+            Back
+          </a>
+          <button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-300 transition">
+            <!-- save -->
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17 6l-3-3H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V6zM5 5h8v4H5V5z"/></svg>
+            Save
+          </button>
+        </div>
+      </div>
+
+      <!-- Basics -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-6 w-6 rounded-md bg-emerald-600/10 grid place-items-center">
+            <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 20 20" fill="currentColor"><path d="M3 5a2 2 0 012-2h5l4 4v8a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/></svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">Basics</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Name</label>
+            <input name="name" required
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Brand</label>
+            <input name="brand" required
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Category</label>
+            <select name="category_id" id="category_id" required onchange="updateItemTypes()"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+              <option value="">Select category</option>
+              {% for c in categories %}
+                <option value="{{ c._id }}" data-types="{{ (c.item_types or [])|join('||') }}">{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Item Type</label>
+            <select name="item_type" id="item_type" required
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+              <option value="">Select item type</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">SKU</label>
+            <input name="sku" required
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Price</label>
+              <input name="price" type="number" step="0.01" value="0"
+                     class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Currency</label>
+              <input name="currency" value="LKR"
+                     class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Stock</label>
+              <input name="stock" type="number" value="0"
+                     class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+              <select name="status"
+                      class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descriptions -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-6 w-6 rounded-md bg-emerald-600/10 grid place-items-center">
+            <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4h12v2H4zM4 8h12v2H4zM4 12h8v2H4z"/></svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">Descriptions</h2>
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Short Description</label>
+            <input name="short_description"
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Description (HTML allowed)</label>
+            <textarea name="description_html" rows="6"
+                      class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional details -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-6 w-6 rounded-md bg-emerald-600/10 grid place-items-center">
+            <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16z"/></svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">Additional Details</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Size/Volume</label>
+            <input name="size_volume"
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Country of Origin</label>
+            <input name="country_of_origin"
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Tags (comma separated)</label>
+            <input name="tags"
+                   class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+          </div>
+        </div>
+      </div>
+
+      <!-- Attributes -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-6 w-6 rounded-md bg-emerald-600/10 grid place-items-center">
+            <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3h12l-1 12a3 3 0 01-3 3H8a3 3 0 01-3-3L4 3z"/></svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">Attributes</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="rounded-xl border border-slate-100 p-4">
+            <p class="font-medium text-slate-800 mb-2">Skin Types</p>
+            <div class="grid grid-cols-2 gap-2">
+              {% for s in attributes.skin_types %}
+                <label class="inline-flex items-center gap-2">
+                  <input type="checkbox" name="skin_types" value="{{ s.key }}" class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-300">
+                  <span class="text-sm text-slate-700">{{ s.label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-100 p-4">
+            <p class="font-medium text-slate-800 mb-2">Concerns</p>
+            <div class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pe-2">
+              {% for c in attributes.concerns %}
+                <label class="inline-flex items-center gap-2">
+                  <input type="checkbox" name="concerns" value="{{ c.key }}" class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-300">
+                  <span class="text-sm text-slate-700">{{ c.label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-6 w-6 rounded-md bg-emerald-600/10 grid place-items-center">
+            <svg class="w-3.5 h-3.5 text-emerald-700" viewBox="0 0 20 20" fill="currentColor"><path d="M4 5a2 2 0 012-2h6l4 4v8a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"/></svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">Media</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Hero Image</label>
+            <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50/50 p-4">
+              <input type="file" name="hero_image" accept="image/*"
+                     class="w-full px-4 py-2 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300">
+              <small class="text-slate-500">JPG/PNG/WebP up to 12MB</small>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Gallery Images</label>
+            <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50/50 p-4">
+              <input type="file" name="gallery" multiple accept="image/*"
+                     class="w-full px-4 py-2 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-300">
+              <small class="text-slate-500">You can select multiple files</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Alt Text (for images)</label>
+          <input name="alt_text"
+                 class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 transition">
+        </div>
+      </div>
+
+      <!-- Footer Actions (duplicate for long forms) -->
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+        <a href="{{ url_for('products_list_admin') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition">
+          Cancel
+        </a>
+        <button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-300 transition">
+          Save Product
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    function updateItemTypes() {
+      const sel = document.getElementById('category_id');
+      const typesStr = sel.options[sel.selectedIndex]?.getAttribute('data-types') || '';
+      const types = typesStr ? typesStr.split('||') : [];
+      const typeSel = document.getElementById('item_type');
+      typeSel.innerHTML =
+        '<option value="">Select item type</option>' +
+        types.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
+  </script>
+{% endblock %}

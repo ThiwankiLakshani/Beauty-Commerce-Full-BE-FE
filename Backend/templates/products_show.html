@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Product — {{ p.name }}{% endblock %}
+{% block content %}
+  <div class="bg-white/95 backdrop-blur shadow-soft border border-emerald-50 rounded-2xl p-6">
+
+    <!-- Header / actions -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="space-y-1">
+        <h1 class="text-2xl font-bold text-slate-800">{{ p.name }}</h1>
+        <div class="flex flex-wrap items-center gap-2">
+          {% set _status = (p.status or 'draft')|lower %}
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium
+            {% if _status in ['active','published'] %} bg-emerald-100 text-emerald-800
+            {% elif _status in ['draft','inactive'] %} bg-slate-100 text-slate-700
+            {% else %} bg-yellow-100 text-yellow-800 {% endif %}">
+            Status: {{ (p.status or 'draft')|capitalize }}
+          </span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
+            SKU: {{ p.sku or '-' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="{{ url_for('products_list_admin') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition">
+          <!-- back icon -->
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4A1 1 0 018.707 6.293L6.414 8.586H17a1 1 0 110 2H6.414l2.293 2.293a1 1 0 010 1.414z"/></svg>
+          Back
+        </a>
+        <a href="{{ url_for('products_edit_admin', product_id=p._id) }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-300 transition">
+          <!-- edit icon -->
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793z"/><path d="M4 13.5V16h2.5l7.086-7.086-2.5-2.5L4 13.5z"/></svg>
+          Edit
+        </a>
+        <!-- delete (logic unchanged) -->
+        <form method="post" action="{{ url_for('products_delete_admin', product_id=p._id) }}"
+              onsubmit="return confirm('Delete this product?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-white bg-red-600 hover:bg-red-700 focus-visible:ring-2 focus-visible:ring-red-300 transition">
+            <!-- trash icon -->
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 7a1 1 0 011 1v7a1 1 0 11-2 0V8a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V8a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V8a1 1 0 011-1z"/><path d="M4 5a1 1 0 011-1h3l1-1h2l1 1h3a1 1 0 110 2H5a1 1 0 01-1-1z"/></svg>
+            Delete
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Images -->
+      <div class="lg:col-span-5">
+        {% if p.hero_image %}
+          <div class="aspect-[4/3] overflow-hidden rounded-2xl border border-slate-100 shadow-soft">
+            <img src="{{ p.hero_image }}" class="h-full w-full object-cover" alt="{{ p.name }}">
+          </div>
+        {% else %}
+          <div class="aspect-[4/3] rounded-2xl border border-dashed border-slate-200 grid place-items-center text-slate-400">
+            No hero image
+          </div>
+        {% endif %}
+
+        {% if p.gallery and p.gallery|length > 0 %}
+          <div class="mt-3 -mx-1 overflow-x-auto">
+            <div class="flex items-center gap-2 px-1">
+              {% for g in p.gallery %}
+                <img src="{{ g }}" class="h-20 w-28 object-cover rounded-lg border border-slate-100 shadow-sm" alt="Gallery">
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Details -->
+      <div class="lg:col-span-7">
+
+        <!-- Highlight cards -->
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div class="rounded-2xl border border-emerald-50 bg-emerald-600/5 p-4">
+            <p class="text-xs uppercase tracking-wide text-slate-500">Price</p>
+            <p class="mt-1 text-2xl font-bold text-slate-800">{{ (p.price or 0)|currency }}</p>
+          </div>
+          <div class="rounded-2xl border border-emerald-50 bg-emerald-600/5 p-4">
+            <p class="text-xs uppercase tracking-wide text-slate-500">Stock</p>
+            <p class="mt-1 text-2xl font-bold text-slate-800">{{ p.stock or 0 }}</p>
+          </div>
+        </div>
+
+        <!-- Meta list -->
+        <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3 text-slate-700">
+          <p><span class="font-semibold text-slate-900">Brand:</span> {{ p.brand or '-' }}</p>
+          <p><span class="font-semibold text-slate-900">Category / Type:</span> {{ p.category or '-' }} / {{ p.item_type or '-' }}</p>
+          <p><span class="font-semibold text-slate-900">Size/Volume:</span> {{ p.size_volume or '-' }}</p>
+          <p><span class="font-semibold text-slate-900">Country:</span> {{ p.country_of_origin or '-' }}</p>
+          <p class="sm:col-span-2">
+            <span class="font-semibold text-slate-900">Skin Types:</span>
+            {% set _skins = (p.skin_types or []) %}
+            {% if _skins and _skins|length > 0 %}
+              {% for s in _skins %}
+                <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 mr-1 mt-1">{{ s }}</span>
+              {% endfor %}
+            {% else %}-{% endif %}
+          </p>
+          <p class="sm:col-span-2">
+            <span class="font-semibold text-slate-900">Concerns:</span>
+            {% set _conc = (p.concerns or []) %}
+            {% if _conc and _conc|length > 0 %}
+              {% for c in _conc %}
+                <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 mr-1 mt-1">{{ c }}</span>
+              {% endfor %}
+            {% else %}-{% endif %}
+          </p>
+          <p class="sm:col-span-2">
+            <span class="font-semibold text-slate-900">Tags:</span>
+            {% set _tags = (p.tags or []) %}
+            {% if _tags and _tags|length > 0 %}
+              {% for t in _tags %}
+                <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 mr-1 mt-1">{{ t }}</span>
+              {% endfor %}
+            {% else %}-{% endif %}
+          </p>
+        </div>
+
+        {% if p.short_description %}
+          <div class="mt-5">
+            <h3 class="text-sm font-semibold text-slate-900">Summary</h3>
+            <p class="mt-1 text-slate-700">{{ p.short_description }}</p>
+          </div>
+        {% endif %}
+
+        {% if p.description_html %}
+          <div class="mt-5">
+            <h3 class="text-sm font-semibold text-slate-900 mb-1">Description</h3>
+            <div class="prose max-w-none prose-headings:text-slate-900 prose-p:text-slate-700">
+              {{ p.description_html|safe }}
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
